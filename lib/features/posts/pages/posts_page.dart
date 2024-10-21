@@ -42,16 +42,12 @@ class _PostsPageState extends State<PostsPage> {
               slivers: [
                 SliverList.separated(
                   itemCount: posts.length,
-                  itemBuilder: (context, index) {
-                    final post = posts[index];
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: PostPreviewCard(
-                        post: post,
-                      ),
-                    );
-                  },
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: PostPreviewCard(
+                      post: posts[index],
+                    ),
+                  ),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 16),
                 ),
