@@ -1,7 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social/data/sources/post_data_source/post_data_source.dart';
-import 'package:social/features/posts/widgets/post_preview_card.dart';
+import 'package:social/features/posts/blocs/post_cubit/posts_cubit.dart';
+import 'package:social/features/posts/blocs/post_cubit/posts_states.dart';
+import 'package:social/features/posts/views/posts_empty_view.dart';
+import 'package:social/features/posts/views/posts_error_view.dart';
+import 'package:social/features/posts/views/posts_loaded_view.dart';
+import 'package:social/features/posts/views/posts_loading_view.dart';
 
 class PostsPage extends StatefulWidget {
   const PostsPage({super.key});
@@ -11,7 +17,8 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
-  late PostDataSource postDataSource;
+  late final PostDataSource postDataSource;
+  late final PostsCubit postsCubit;
 
   @override
   void initState() {
@@ -25,57 +32,25 @@ class _PostsPageState extends State<PostsPage> {
     final dio = Dio(baseOption);
 
     postDataSource = PostDataSource(dio);
+
+    postsCubit = PostsCubit(dataSource: postDataSource)..getFirstPostsChunk();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: postDataSource.getPosts(page: 10),
-        builder: (context, snapshot) {
-          final data = snapshot.data;
-
-          if (data != null) {
-            final posts = data.data;
-
-            return CustomScrollView(
-              slivers: [
-                SliverList.separated(
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: PostPreviewCard(
-                      post: posts[index],
-                    ),
-                  ),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 16),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: FilledButton(
-                      onPressed: () {},
-                      child: const Text('Загрузить еще'),
-                    ),
-                  ),
-                )
-              ],
-            );
-          }
-
-          final error = snapshot.error;
-
-          if (error != null) {
-            return Center(
-              child: Text('$error'),
-            );
-          }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+      appBar: AppBar(),
+      body: SafeArea(
+        child: BlocBuilder<PostsCubit, PostsState>(
+          bloc: postsCubit,
+          builder: (context, state) => state.map(
+            empty: (state) => const PostsEmptyView(),
+            loading: (state) => const PostsLoadingView(),
+            loaded: (state) => PostsLoadedView(posts: state.posts),
+            nextLoading: (state) => PostsLoadedView(posts: state.posts),
+            error: (state) => PostsErrorView(message: state.message),
+          ),
+        ),
       ),
     );
   }
