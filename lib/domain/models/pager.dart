@@ -22,4 +22,18 @@ class Pager<T> extends Equatable {
       limit,
     ];
   }
+
+  Pager<T> copyWith({
+    List<T>? data,
+    int? total,
+    int? page,
+    int? limit,
+  }) {
+    return Pager(
+      data: data??this.data,
+      total: total ?? this.total,
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+    );
+  }
 }
