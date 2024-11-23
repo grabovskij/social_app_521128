@@ -5,6 +5,7 @@ import 'package:social/configuration/navigation/app_routes.dart';
 class MenuShellWidget extends StatelessWidget {
   static const List<RouteInfo> _routes = [
     AppRoutes.root,
+    AppRoutes.search,
     AppRoutes.profile,
   ];
 
@@ -26,6 +27,10 @@ class MenuShellWidget extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
           NavigationDestination(
             icon: Icon(Icons.person),

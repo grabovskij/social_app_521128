@@ -41,6 +41,7 @@ dependencies:
 
   # Сеть
   dio: ^5.7.0
+  url_strategy: ^0.3.0
 
   # Модели
   equatable: ^2.0.5
