@@ -21,6 +21,7 @@ class SearchResultPage extends StatelessWidget {
       }
 
       return 200;
+      
     } on Object {
       return 200;
     }
